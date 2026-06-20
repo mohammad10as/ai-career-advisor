@@ -5,9 +5,6 @@ from flask import Flask, request, jsonify, send_file
 
 app = Flask(__name__)
 
-# ─────────────────────────────────────────────
-# DATASET
-# ─────────────────────────────────────────────
 JOB_ROLES = [
     {
         "title": "Data Scientist",
@@ -215,9 +212,6 @@ JOB_ROLES = [
     },
 ]
 
-# ─────────────────────────────────────────────
-# NLP: extract skills from job description text
-# ─────────────────────────────────────────────
 ALL_KNOWN_SKILLS = sorted(set(skill for role in JOB_ROLES for skill in role["skills"]))
 
 def extract_skills_from_text(text):
@@ -229,9 +223,6 @@ def extract_skills_from_text(text):
             found.append(skill)
     return found
 
-# ─────────────────────────────────────────────
-# TF-IDF + Cosine Similarity
-# ─────────────────────────────────────────────
 def compute_tf(skill_list):
     total = len(skill_list)
     counts = Counter(skill_list)
@@ -264,9 +255,6 @@ def build_recommender():
     role_vectors = [compute_tfidf_vector(role["skills"], idf, vocabulary) for role in JOB_ROLES]
     return vocabulary, idf, role_vectors
 
-# ─────────────────────────────────────────────
-# KNN Classifier (skill-count based)
-# ─────────────────────────────────────────────
 def knn_classify(user_skills, k=3):
     distances = []
     for role in JOB_ROLES:
@@ -279,11 +267,8 @@ def knn_classify(user_skills, k=3):
     distances.sort(key=lambda x: x[1], reverse=True)
     return distances[:k]
 
-# ─────────────────────────────────────────────
-# MAIN RECOMMEND FUNCTION
-# ─────────────────────────────────────────────
 def recommend(manual_skills, job_description="", top_n=3):
-    # Merge manual skills + extracted from JD
+  
     extracted = extract_skills_from_text(job_description) if job_description else []
     all_skills = list(set([s.strip().lower() for s in manual_skills] + extracted))
 
@@ -296,7 +281,6 @@ def recommend(manual_skills, job_description="", top_n=3):
     if all(v == 0 for v in user_vector):
         return {"error": "No matching skills found. Try: Python, AWS, Docker, SQL, React, Machine Learning..."}
 
-    # TF-IDF cosine scores
     scored_roles = []
     for i, role in enumerate(JOB_ROLES):
         score = cosine_similarity(user_vector, role_vectors[i])
@@ -312,7 +296,6 @@ def recommend(manual_skills, job_description="", top_n=3):
 
     scored_roles.sort(key=lambda x: x["score"], reverse=True)
 
-    # KNN classification
     knn_results = knn_classify(all_skills, k=3)
 
     return {
@@ -323,9 +306,6 @@ def recommend(manual_skills, job_description="", top_n=3):
         "total_roles_evaluated": len(JOB_ROLES)
     }
 
-# ─────────────────────────────────────────────
-# ROUTES
-# ─────────────────────────────────────────────
 @app.route("/")
 def index():
     return send_file("index.html")
