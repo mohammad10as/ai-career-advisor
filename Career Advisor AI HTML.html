@@ -32,7 +32,6 @@
     padding: 0;
   }
 
-  /* HEADER */
   header {
     padding: 28px 40px;
     border-bottom: 1px solid var(--border);
@@ -64,7 +63,6 @@
     margin-left: auto;
   }
 
-  /* LAYOUT */
   .container {
     max-width: 1100px;
     margin: 0 auto;
@@ -75,7 +73,6 @@
     align-items: start;
   }
 
-  /* PANEL */
   .panel {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -92,7 +89,6 @@
     margin-bottom: 20px;
   }
 
-  /* TABS */
   .tabs {
     display: flex;
     gap: 0;
@@ -117,7 +113,6 @@
     color: #fff;
   }
 
-  /* SKILL TAGS */
   .skill-input-row {
     display: flex;
     gap: 8px;
@@ -177,7 +172,6 @@
     margin: auto;
   }
 
-  /* SUGGEST */
   .suggest-grid {
     display: flex;
     flex-wrap: wrap;
@@ -199,7 +193,6 @@
     color: var(--accent);
   }
 
-  /* BUTTON */
   .btn {
     width: 100%;
     padding: 13px;
@@ -225,7 +218,6 @@
     flex-shrink: 0;
   }
 
-  /* DIVIDER */
   .or-divider {
     text-align: center;
     color: var(--muted);
@@ -244,7 +236,6 @@
   .or-divider::before { left: 0; }
   .or-divider::after { right: 0; }
 
-  /* RESULTS */
   .results-panel { display: flex; flex-direction: column; gap: 16px; }
 
   .placeholder {
@@ -260,7 +251,6 @@
   }
   .placeholder-icon { font-size: 3rem; opacity: 0.4; }
 
-  /* RESULT CARD */
   .result-card {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -292,7 +282,6 @@
   .rank-2 .rank-badge { background: rgba(5,150,105,0.1); color: var(--accent2); }
   .rank-3 .rank-badge { background: rgba(4,120,87,0.1); color: var(--green); }
 
-  /* PROGRESS BAR */
   .match-bar-wrap { margin-bottom: 16px; }
   .match-label {
     display: flex;
@@ -315,7 +304,6 @@
     transition: width 0.8s ease;
   }
 
-  /* SKILL SECTION */
   .skill-section { margin-bottom: 14px; }
   .skill-section-title {
     font-size: 0.75rem;
@@ -353,7 +341,6 @@
   }
   .skill-tag.missing a:hover { text-decoration: underline; }
 
-  /* KNN SECTION */
   .knn-card {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -373,7 +360,6 @@
   .knn-title { flex: 1; font-size: 0.85rem; font-weight: 500; }
   .knn-score { font-size: 0.8rem; color: var(--accent); font-weight: 600; }
 
-  /* EXTRACTED SKILLS */
   .extracted-notice {
     background: rgba(22,163,74,0.06);
     border: 1px solid rgba(22,163,74,0.2);
@@ -385,7 +371,6 @@
   }
   .extracted-notice strong { color: var(--accent); }
 
-  /* LOADING */
   .loading {
     display: flex;
     align-items: center;
@@ -404,7 +389,6 @@
   }
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* ERROR */
   .error-msg {
     background: rgba(220,38,38,0.07);
     border: 1px solid rgba(220,38,38,0.25);
@@ -430,19 +414,16 @@
 
 <div class="container">
 
-  <!-- LEFT: INPUT PANEL -->
   <div>
     <div class="panel">
       <div class="panel-title">Your Profile</div>
 
-      <!-- TABS -->
       <div class="tabs">
         <div class="tab active" onclick="switchTab('skills')">Manual Skills</div>
         <div class="tab" onclick="switchTab('jd')">Job Description</div>
         <div class="tab" onclick="switchTab('both')">Both</div>
       </div>
 
-      <!-- SKILLS INPUT -->
       <div id="tab-skills">
         <div class="skill-input-row">
           <input type="text" id="skillInput" placeholder="Type a skill and press Enter or Add..." onkeydown="handleSkillKey(event)" />
@@ -456,12 +437,10 @@
         <div class="suggest-grid" id="suggestGrid"></div>
       </div>
 
-      <!-- JD INPUT -->
       <div id="tab-jd" style="display:none;">
         <textarea id="jdInput" placeholder="Paste a job description here. Skills will be automatically extracted using NLP..."></textarea>
       </div>
 
-      <!-- BOTH -->
       <div id="tab-both" style="display:none;">
         <div class="skill-input-row">
           <input type="text" id="skillInput2" placeholder="Type a skill..." onkeydown="handleSkillKey2(event)" />
@@ -480,7 +459,6 @@
     </div>
   </div>
 
-  <!-- RIGHT: RESULTS PANEL -->
   <div class="results-panel" id="resultsPanel">
     <div class="placeholder">
       <div class="placeholder-icon">🎯</div>
@@ -499,7 +477,6 @@
     "machine learning", "deep learning", "git", "linux", "tensorflow", "kubernetes",
     "flask", "node", "java", "security", "cloud"];
 
-  // Render suggest chips
   const sg = document.getElementById('suggestGrid');
   SUGGEST_SKILLS.forEach(s => {
     const chip = document.createElement('span');
@@ -612,7 +589,6 @@
   function renderResults(data) {
     let html = '';
 
-    // Extracted skills notice
     if (data.extracted_from_jd && data.extracted_from_jd.length > 0) {
       html += `<div class="extracted-notice">
         🔍 Extracted <strong>${data.extracted_from_jd.length} skills</strong> from job description: 
@@ -620,7 +596,6 @@
       </div>`;
     }
 
-    // Top matches
     const ranks = ['#1 Best Match', '#2 Strong Match', '#3 Good Match'];
     data.recommendations.forEach((rec, i) => {
       const missingLinks = Object.entries(rec.learning || {}).map(([skill, url]) =>
@@ -654,7 +629,6 @@
         </div>`;
     });
 
-    // KNN Classification
     html += `
       <div class="knn-card">
         <div class="panel-title">🤖 KNN Classification — Profile Type</div>
@@ -668,7 +642,6 @@
 
     document.getElementById('resultsPanel').innerHTML = html;
 
-    // Animate bars
     setTimeout(() => {
       document.querySelectorAll('.bar-fill').forEach(b => {
         const w = b.style.width;
